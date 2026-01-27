@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>扫码加入抽奖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding-top: 60px;
+    }
+    input {
+      font-size: 18px;
+      padding: 10px;
+      width: 70%;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎁 扫码加入抽奖</h2>
+  <input id="name" placeholder="请输入你的名字" />
+  <br/>
+  <button onclick="join()">加入</button>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // 🔥 换成你自己的 Firebase 配置
+    const firebaseConfig = {
+      apiKey: "AIzaSyCVC9jN9jzr0nTgmdVZEPYjSB6oEQ6ap9s",
+      authDomain: "unitylottery.firebaseapp.com",
+      databaseURL: "https://unitylottery-default-rtdb.firebaseio.com",
+      projectId: "unitylottery",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 房间号（可改）
+    const roomId = "ROOM_001";
+
+    function join() {
+      const name = document.getElementById("name").value.trim();
+      if (!name) {
+        alert("请输入名字");
+        return;
+      }
+
+      db.ref(`rooms/${roomId}/users`).push({
+        name: name,
+        time: Date.now()
+      });
+
+      alert("加入成功！");
+    }
+  </script>
+
+</body>
+</html>
