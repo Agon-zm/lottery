@@ -1,20 +1,72 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <title>加入抽奖</title>
 
-  <!-- Firebase SDK（compat 版） -->
+  <!-- 移动端 / 微信友好 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Firebase SDK（compat，最稳） -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #f6f7f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      width: 85%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    input {
+      width: 100%;
+      font-size: 18px;
+      padding: 10px;
+      margin-bottom: 16px;
+    }
+    button {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px;
+      background: #07c160;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+    }
+    button:disabled {
+      background: #aaa;
+    }
+    .tip {
+      margin-top: 12px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
-  <input id="nameInput" placeholder="输入名字" />
-  <button onclick="join()">加入抽奖</button>
+  <div class="card">
+    <h2>🎉 加入抽奖</h2>
+    <input id="nameInput" placeholder="请输入你的名字" />
+    <button id="joinBtn" onclick="join()">立即加入</button>
+    <div class="tip" id="tip"></div>
+  </div>
 
   <script>
-    // 1️⃣ Firebase 配置
+    // ========= 1️⃣ Firebase 配置 =========
     const firebaseConfig = {
   apiKey: "AIzaSyCVC9jN9jzr0nTgmdVZEPYjSB6oEQ6ap9s",
   authDomain: "unitylottery.firebaseapp.com",
@@ -25,11 +77,22 @@
   appId: "1:370201025153:web:f56ae08816268921740b80"
 };
 
-    // 2️⃣ 初始化（一定要在 join 之前）
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 3️⃣ 再声明 join
+    const ROOM_ID = "room_001";
+
+    const btn = document.getElementById("joinBtn");
+    const tip = document.getElementById("tip");
+
+    // ========= 2️⃣ 防重复加入 =========
+    if (localStorage.getItem("joined")) {
+      btn.disabled = true;
+      btn.innerText = "已加入";
+      tip.innerText = "你已经成功加入过抽奖";
+    }
+
+    // ========= 3️⃣ 加入逻辑 =========
     function join() {
       const name = document.getElementById("nameInput").value.trim();
       if (!name) {
@@ -37,12 +100,25 @@
         return;
       }
 
-      db.ref("rooms/room_001/users").push({
+      btn.disabled = true;
+      btn.innerText = "提交中…";
+      tip.innerText = "";
+
+      db.ref(`rooms/${ROOM_ID}/users`).push({
         name: name,
         time: Date.now()
+      })
+      .then(() => {
+        localStorage.setItem("joined", "1");
+        btn.innerText = "已加入";
+        tip.innerText = "加入成功请等待抽奖 🎁";
+      })
+      .catch(err => {
+        console.error(err);
+        alert("网络异常，请重试");
+        btn.disabled = false;
+        btn.innerText = "立即加入";
       });
-
-      alert("加入成功");
     }
   </script>
 </body>
