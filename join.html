@@ -2,15 +2,15 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <title>加入抽奖</title>
+  <title>活动参与页面</title>
 
   <!-- 移动端 / 微信友好 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="format-detection" content="telephone=no">
 
-  <!-- Firebase SDK（compat，最稳） -->
-<script src="./firebase/firebase-app-compat.js"></script>
-<script src="./firebase/firebase-database-compat.js"></script>
+  <!-- Firebase SDK（compat，稳定） -->
+  <script src="./firebase/firebase-app-compat.js"></script>
+  <script src="./firebase/firebase-database-compat.js"></script>
 
   <style>
     body {
@@ -54,28 +54,43 @@
       color: #666;
       font-size: 14px;
     }
+    .footer {
+      margin-top: 28px;
+      font-size: 12px;
+      color: #999;
+      line-height: 1.5;
+    }
   </style>
 </head>
 
 <body>
   <div class="card">
-    <h2>🎉 加入抽奖</h2>
-    <input id="nameInput" placeholder="请输入你的名字" />
-    <button id="joinBtn" onclick="join()">立即加入</button>
+    <h2>📋 现场活动参与</h2>
+
+    <input id="nameInput" placeholder="请输入你的姓名或昵称" />
+    <button id="joinBtn" onclick="join()">确认参与</button>
+
     <div class="tip" id="tip"></div>
+
+    <div class="footer">
+      本页面为线下活动互动使用<br>
+      不涉及任何现金交易或赌博行为<br>
+      数据仅用于本次活动展示<br>
+      © 2026   活动页面
+    </div>
   </div>
 
   <script>
-    // ========= 1️⃣ Firebase 配置 =========
+    // ========= Firebase 配置 =========
     const firebaseConfig = {
-  apiKey: "AIzaSyCVC9jN9jzr0nTgmdVZEPYjSB6oEQ6ap9s",
-  authDomain: "unitylottery.firebaseapp.com",
-  databaseURL: "https://unitylottery-default-rtdb.firebaseio.com",
-  projectId: "unitylottery",
-  storageBucket: "unitylottery.firebasestorage.app",
-  messagingSenderId: "370201025153",
-  appId: "1:370201025153:web:f56ae08816268921740b80"
-};
+      apiKey: "AIzaSyCVC9jN9jzr0nTgmdVZEPYjSB6oEQ6ap9s",
+      authDomain: "unitylottery.firebaseapp.com",
+      databaseURL: "https://unitylottery-default-rtdb.firebaseio.com",
+      projectId: "unitylottery",
+      storageBucket: "unitylottery.firebasestorage.app",
+      messagingSenderId: "370201025153",
+      appId: "1:370201025153:web:f56ae08816268921740b80"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -85,18 +100,18 @@
     const btn = document.getElementById("joinBtn");
     const tip = document.getElementById("tip");
 
-    // ========= 2️⃣ 防重复加入 =========
+    // ========= 防重复参与 =========
     if (localStorage.getItem("joined")) {
       btn.disabled = true;
-      btn.innerText = "已加入";
-      tip.innerText = "你已经成功加入过抽奖";
+      btn.innerText = "已参与";
+      tip.innerText = "你已成功参与本次活动";
     }
 
-    // ========= 3️⃣ 加入逻辑 =========
+    // ========= 参与逻辑 =========
     function join() {
       const name = document.getElementById("nameInput").value.trim();
       if (!name) {
-        alert("请输入名字");
+        alert("请输入姓名或昵称");
         return;
       }
 
@@ -110,14 +125,14 @@
       })
       .then(() => {
         localStorage.setItem("joined", "1");
-        btn.innerText = "已加入";
-        tip.innerText = "加入成功请等待抽奖 🎁";
+        btn.innerText = "已参与";
+        tip.innerText = "提交成功，请关注现场活动进程";
       })
       .catch(err => {
         console.error(err);
         alert("网络异常，请重试");
         btn.disabled = false;
-        btn.innerText = "立即加入";
+        btn.innerText = "确认参与";
       });
     }
   </script>
